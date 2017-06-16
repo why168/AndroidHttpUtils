@@ -6,18 +6,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.github.why168.androidhttputils.http.Call;
-import com.github.why168.androidhttputils.http.Callback;
-import com.github.why168.androidhttputils.http.GoHttp;
-import com.github.why168.androidhttputils.http.Request;
+import com.github.why168.http.Call;
+import com.github.why168.http.Callback;
+import com.github.why168.http.HttpUtils;
+import com.github.why168.http.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity {
     private TextView tv_text;
-    private GoHttp goHttp;
+    private HttpUtils goHttp;
 
     // 魂斗罗下载 http://124.193.230.12/imtt.dd.qq.com/16891/A1BFDC1BD905CEF01F3076509F920FD3.apk?mkey=59424b6446b6ee89&f=ae12&c=0&fsname=com.tencent.shootgame_1.2.33.7260_337260.apk&csr=1bbd&p=.apk
 
@@ -27,7 +31,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         tv_text = (TextView) findViewById(R.id.tv_text);
-        goHttp = new GoHttp();
+        goHttp = new HttpUtils();
 
     }
 
@@ -38,11 +42,10 @@ public class HomeActivity extends AppCompatActivity {
 
         // http://jubi.com/api/v1/ticker?coin=mryc
         Request request = new Request.Builder()
-                .url("http://www.aybrowser.com/sdk")
+                .url("http://www.jubi.com/api/v1/ticker?coin=mryc")
                 .method("GET")
                 .headers(headers)
                 .build();
-
 
         Call call = goHttp.newCall(request);
         call.enqueue(new Callback() {
@@ -52,8 +55,18 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(String results) throws IOException {
-                tv_text.setText("GET_" + results);
+            public void onSuccessful(String results) throws IOException {
+                try {
+                    JSONObject jsonObject = new JSONObject(results);
+                    String last = jsonObject.optString("last");
+                    double i = Double.valueOf(last);
+                    double def = 0.43;
+
+                    Log.e("Edwin", "results = " + results + "\nlast = " + i + "\n"
+                            + "百分比 = " + new BigDecimal(((i - def) / def) * 100).floatValue() + "%");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -82,7 +95,7 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(String results) throws IOException {
+            public void onSuccessful(String results) throws IOException {
                 tv_text.setText("POST_" + results);
             }
         });
@@ -92,8 +105,7 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    public void
-    getFileHttp() {
+    public void getFileHttp() {
         Map<String, String> headers = new HashMap<>();
         headers.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/603.2.4 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.4");
         headers.put("Content-Type", "application/octet-stream");
@@ -114,7 +126,7 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(String results) throws IOException {
+            public void onSuccessful(String results) throws IOException {
                 tv_text.setText("GET_" + results);
             }
         });

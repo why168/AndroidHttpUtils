@@ -1,6 +1,4 @@
-package com.github.why168.androidhttputils.http;
-
-import android.support.annotation.NonNull;
+package com.github.why168.http;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -118,7 +116,7 @@ public class HttpDispatcher {
     private static ThreadFactory threadFactory(final String name, final boolean daemon) {
         return new ThreadFactory() {
             @Override
-            public Thread newThread(@NonNull Runnable runnable) {
+            public Thread newThread(Runnable runnable) {
                 Thread result = new Thread(runnable, name);
                 result.setDaemon(daemon);
                 return result;

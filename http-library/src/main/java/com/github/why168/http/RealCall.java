@@ -1,10 +1,10 @@
-package com.github.why168.androidhttputils.http;
+package com.github.why168.http;
 
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.github.why168.androidhttputils.http.code.HandlerExecutor;
-import com.github.why168.androidhttputils.util.StringUtils;
+import com.github.why168.http.code.HandlerExecutor;
+import com.github.why168.http.util.StringUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,7 +19,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipInputStream;
 
-import static com.github.why168.androidhttputils.util.StringUtils.getPrintSize;
 
 /**
  * @author Edwin.Wu
@@ -28,11 +27,11 @@ import static com.github.why168.androidhttputils.util.StringUtils.getPrintSize;
  */
 public class RealCall implements Call {
     private final Request request;
-    private final GoHttp client;
+    private final HttpUtils client;
     private boolean executed;
     private final AtomicBoolean isCancelled = new AtomicBoolean();
 
-    public RealCall(GoHttp client, Request request) {
+    public RealCall(HttpUtils client, Request request) {
         this.client = client;
         this.request = request;
         this.isCancelled.set(false);
@@ -102,7 +101,7 @@ public class RealCall implements Call {
             }
         }
 
-        private void postHttpRequest(Request request, GoHttp httpUtils) {
+        private void postHttpRequest(Request request, HttpUtils httpUtils) {
             HttpURLConnection connection = null;
             InputStream is = null;
             BufferedOutputStream bos = null;
@@ -131,7 +130,7 @@ public class RealCall implements Call {
 
                     // Log
                     Log.e("Edwin", "responseCode = " + responseCode + "\n" +
-                            "contentLength = " + getPrintSize(connection.getContentLength()) + "\n" +
+                            "contentLength = " + StringUtils.getPrintSize(connection.getContentLength()) + "\n" +
                             request.toString());
 
                     String encoding = connection.getContentEncoding();
@@ -166,7 +165,7 @@ public class RealCall implements Call {
                         @Override
                         public void run() {
                             try {
-                                responseCallback.onResponse(result);
+                                responseCallback.onSuccessful(result);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -206,7 +205,7 @@ public class RealCall implements Call {
             }
         }
 
-        private void getHttpRequest(Request request, GoHttp httpUtils) {
+        private void getHttpRequest(Request request, HttpUtils httpUtils) {
             HttpURLConnection connection = null;
             InputStream is = null;
             ByteArrayOutputStream out = null;
@@ -261,7 +260,7 @@ public class RealCall implements Call {
                         @Override
                         public void run() {
                             try {
-                                responseCallback.onResponse(result);
+                                responseCallback.onSuccessful(result);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

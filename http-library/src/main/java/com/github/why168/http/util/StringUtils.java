@@ -1,4 +1,4 @@
-package com.github.why168.androidhttputils.util;
+package com.github.why168.http.util;
 
 /**
  * @author Edwin.Wu

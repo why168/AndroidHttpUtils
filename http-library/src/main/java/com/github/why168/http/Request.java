@@ -1,4 +1,4 @@
-package com.github.why168.androidhttputils.http;
+package com.github.why168.http;
 
 import java.util.Arrays;
 import java.util.Map;

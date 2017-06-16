@@ -1,8 +1,7 @@
-package com.github.why168.androidhttputils.http.code;
+package com.github.why168.http.code;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 
 import java.util.concurrent.Executor;
 
@@ -24,7 +23,7 @@ public class HandlerExecutor implements Executor {
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
-    public void execute(@NonNull Runnable command) {
+    public void execute(Runnable command) {
         handler.post(command);
     }
 }

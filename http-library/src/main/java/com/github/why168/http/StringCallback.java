@@ -1,4 +1,4 @@
-package com.github.why168.androidhttputils.http;
+package com.github.why168.http;
 
 import java.io.IOException;
 
@@ -7,14 +7,14 @@ import java.io.IOException;
  * @version 2017/6/15 21:56
  * @since JDK1.8
  */
-public class StringCallback implements Callback{
+public class StringCallback implements Callback {
     @Override
     public void onFailure(Exception e) {
 
     }
 
     @Override
-    public void onResponse(String results) throws IOException {
+    public void onSuccessful(String results) throws IOException {
 
     }
 }

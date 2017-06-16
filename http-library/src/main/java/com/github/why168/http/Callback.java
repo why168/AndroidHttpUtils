@@ -1,4 +1,4 @@
-package com.github.why168.androidhttputils.http;
+package com.github.why168.http;
 
 import java.io.IOException;
 
@@ -10,6 +10,5 @@ import java.io.IOException;
 public interface Callback {
     void onFailure(Exception e);
 
-
-    void onResponse(String results) throws IOException;
+    void onSuccessful(String results) throws IOException;
 }

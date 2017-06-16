@@ -1,21 +1,21 @@
-package com.github.why168.androidhttputils.http;
+package com.github.why168.http;
 
 /**
  * @author Edwin.Wu
  * @version 2017/6/13 16:23
  * @since JDK1.8
  */
-public class GoHttp implements Call.Factory {
+public class HttpUtils implements Call.Factory {
     private HttpDispatcher dispatcher;
     private int connectTimeout;
     private int readTimeout;
     private int writeTimeout;
 
-    public GoHttp() {
+    public HttpUtils() {
         this(new Builder());
     }
 
-    private GoHttp(Builder builder) {
+    private HttpUtils(Builder builder) {
         dispatcher = builder.dispatcher;
         connectTimeout = builder.connectTimeout;
         readTimeout = builder.readTimeout;
@@ -37,7 +37,7 @@ public class GoHttp implements Call.Factory {
         int readTimeout;
         int writeTimeout;
 
-        public Builder(GoHttp httpUtils) {
+        public Builder(HttpUtils httpUtils) {
             dispatcher = httpUtils.dispatcher;
             connectTimeout = httpUtils.connectTimeout;
             readTimeout = httpUtils.readTimeout;

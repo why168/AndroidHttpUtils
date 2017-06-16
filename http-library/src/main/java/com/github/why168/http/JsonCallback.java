@@ -1,4 +1,4 @@
-package com.github.why168.androidhttputils.http;
+package com.github.why168.http;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ public class JsonCallback implements Callback {
     }
 
     @Override
-    public void onResponse(String results) throws IOException {
+    public void onSuccessful(String results) throws IOException {
 
     }
 }
