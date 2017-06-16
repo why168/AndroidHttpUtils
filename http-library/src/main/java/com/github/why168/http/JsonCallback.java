@@ -1,20 +1,17 @@
 package com.github.why168.http;
 
-import java.io.IOException;
+import org.json.JSONObject;
 
 /**
  * @author Edwin.Wu
  * @version 2017/6/15 21:56
  * @since JDK1.8
  */
-public class JsonCallback implements Callback {
-    @Override
-    public void onFailure(Exception e) {
-
-    }
+public abstract class JsonCallback extends Callback<JSONObject> {
 
     @Override
-    public void onSuccessful(String results) throws IOException {
-
+    public JSONObject parseNetworkResponse(Response response) throws Exception {
+        String results = new String(response.getBody());
+        return new JSONObject(results);
     }
 }

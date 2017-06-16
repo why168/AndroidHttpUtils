@@ -1,20 +1,14 @@
 package com.github.why168.http;
 
-import java.io.IOException;
-
 /**
  * @author Edwin.Wu
  * @version 2017/6/15 21:56
  * @since JDK1.8
  */
-public class StringCallback implements Callback {
-    @Override
-    public void onFailure(Exception e) {
-
-    }
+public abstract class StringCallback extends Callback<String> {
 
     @Override
-    public void onSuccessful(String results) throws IOException {
-
+    public String parseNetworkResponse(Response response) throws Exception {
+        return new String(response.getBody());
     }
 }

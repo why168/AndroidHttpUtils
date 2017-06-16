@@ -13,25 +13,26 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipInputStream;
 
-
 /**
  * @author Edwin.Wu
  * @version 2017/6/14 10:06
  * @since JDK1.8
  */
-public class RealCall implements Call {
+class RealCall implements Call {
     private final Request request;
     private final HttpUtils client;
     private boolean executed;
     private final AtomicBoolean isCancelled = new AtomicBoolean();
 
-    public RealCall(HttpUtils client, Request request) {
+    RealCall(HttpUtils client, Request request) {
         this.client = client;
         this.request = request;
         this.isCancelled.set(false);
@@ -127,7 +128,6 @@ public class RealCall implements Call {
                 bos.flush();
                 final int responseCode = connection.getResponseCode();
                 if (responseCode >= 200 && responseCode <= 300) {
-
                     // Log
                     Log.e("Edwin", "responseCode = " + responseCode + "\n" +
                             "contentLength = " + StringUtils.getPrintSize(connection.getContentLength()) + "\n" +
@@ -160,12 +160,34 @@ public class RealCall implements Call {
                         out.flush();
                     }
 
+                    Map<String, String> headers = new HashMap<>();
+
+                    Map<String, List<String>> headerFields = connection.getHeaderFields();
+                    for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
+                        String key = entry.getKey();
+                        StringBuilder sb = new StringBuilder();
+                        for (String value : entry.getValue()) {
+                            sb.append(value).append(";");
+                        }
+                        headers.put(key, sb.toString());
+                    }
+
+                    final Response response = new Response.Builder()
+                            .request(request)
+                            .body(out.toByteArray())
+                            .code(responseCode)
+                            .header(headers)
+                            .message("成功:" + connection.getResponseMessage())
+                            .build();
+
                     final String result = new String(out.toByteArray(), Charset.forName("UTF-8"));
+                    final Object o = responseCallback.parseNetworkResponse(response);
+
                     HandlerExecutor.getInstance().execute(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                responseCallback.onSuccessful(result);
+                                responseCallback.onSuccessful(response, o);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -175,6 +197,7 @@ public class RealCall implements Call {
                     HandlerExecutor.getInstance().execute(new Runnable() {
                         @Override
                         public void run() {
+
                             responseCallback.onFailure(new RuntimeException("error code = " + responseCode));
                         }
                     });
@@ -255,12 +278,35 @@ public class RealCall implements Call {
                         out.write(buffer, 0, len);
                         out.flush();
                     }
+
+                    Map<String, String> headers = new HashMap<>();
+
+                    Map<String, List<String>> headerFields = connection.getHeaderFields();
+                    for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
+                        String key = entry.getKey();
+                        StringBuilder sb = new StringBuilder();
+                        for (String value : entry.getValue()) {
+                            sb.append(value).append(";");
+                        }
+                        headers.put(key, sb.toString());
+                    }
+
+                    final Response response = new Response.Builder()
+                            .request(request)
+                            .body(out.toByteArray())
+                            .code(status)
+                            .header(headers)
+                            .message("成功:" + connection.getResponseMessage())
+                            .build();
+
                     final String result = new String(out.toByteArray(), Charset.forName("UTF-8"));
+                    final Object o = responseCallback.parseNetworkResponse(response);
+
                     HandlerExecutor.getInstance().execute(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                responseCallback.onSuccessful(result);
+                                responseCallback.onSuccessful(response, o);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

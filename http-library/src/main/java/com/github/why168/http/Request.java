@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
+ * 请求体
+ *
  * @author Edwin.Wu
  * @version 2017/6/13 16:32
  * @since JDK1.8
@@ -11,15 +13,15 @@ import java.util.Map;
 public final class Request {
     private final String url;
     private final String method;
-    private Map<String, String> headers;
-    private byte[] bodys;
+    private final Map<String, String> headers;
+    private final byte[] body;
 
 
     private Request(Builder builder) {
         this.url = builder.url;
         this.method = builder.method;
         this.headers = builder.headers;
-        this.bodys = builder.bodys;
+        this.body = builder.body;
     }
 
     public String getUrl() {
@@ -35,14 +37,14 @@ public final class Request {
     }
 
     public byte[] getBody() {
-        return bodys;
+        return body;
     }
 
     public static class Builder {
         private String url;
         private String method;
         private Map<String, String> headers;
-        private byte[] bodys;
+        private byte[] body;
 
 
         public Builder() {
@@ -68,8 +70,8 @@ public final class Request {
         }
 
         public Builder bodys(byte[] bodys) {
-            if (bodys == null) throw new NullPointerException("bodys == null");
-            this.bodys = bodys;
+            if (bodys == null) throw new NullPointerException("body == null");
+            this.body = bodys;
             return this;
         }
 
@@ -86,7 +88,7 @@ public final class Request {
                 "url='" + url + '\'' +
                 ", method='" + method + '\'' +
                 ", headers=" + headers +
-                ", bodys=" + Arrays.toString(bodys) +
+                ", body=" + Arrays.toString(body) +
                 '}';
     }
 }

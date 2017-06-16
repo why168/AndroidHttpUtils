@@ -8,10 +8,10 @@ import java.util.Locale;
  * @version 2017/6/13 16:15
  * @since JDK1.8
  */
-public abstract class NickRunnable implements Runnable {
+abstract class NickRunnable implements Runnable {
     protected final String name;
 
-    public NickRunnable(String format, Object... args) {
+    NickRunnable(String format, Object... args) {
         this.name = String.format(Locale.US, format, args);
     }
 

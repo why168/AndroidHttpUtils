@@ -7,8 +7,15 @@ import java.io.IOException;
  * @version 2017/6/13 16:18
  * @since JDK1.8
  */
-public interface Callback {
-    void onFailure(Exception e);
+public abstract class Callback<T> {
 
-    void onSuccessful(String results) throws IOException;
+    public abstract T parseNetworkResponse(Response response) throws Exception;
+
+    public abstract void onFailure(Exception e);
+
+    public abstract void onSuccessful(Response response, T results) throws IOException;
+
+    public void onProgress(long progress, long total) {
+
+    }
 }
