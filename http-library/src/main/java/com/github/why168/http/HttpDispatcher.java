@@ -13,6 +13,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * HttpDispatcher
+ *
  * @author Edwin.Wu
  * @version 2017/6/13 16:14
  * @since JDK1.8

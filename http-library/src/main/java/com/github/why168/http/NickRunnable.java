@@ -4,6 +4,8 @@ package com.github.why168.http;
 import java.util.Locale;
 
 /**
+ * NickRunnable
+ *
  * @author Edwin.Wu
  * @version 2017/6/13 16:15
  * @since JDK1.8

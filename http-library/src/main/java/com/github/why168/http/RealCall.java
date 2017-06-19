@@ -22,6 +22,8 @@ import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipInputStream;
 
 /**
+ * RealCall
+ *
  * @author Edwin.Wu
  * @version 2017/6/14 10:06
  * @since JDK1.8
@@ -174,6 +176,7 @@ class RealCall implements Call {
 
                     final Response response = new Response.Builder()
                             .request(request)
+                            .inputStream(is)
                             .body(out.toByteArray())
                             .code(responseCode)
                             .header(headers)
@@ -266,18 +269,15 @@ class RealCall implements Call {
                     if (isCancelled.get())
                         return;
 
-                    out = new ByteArrayOutputStream(2048);
-                    byte[] buffer = new byte[2048];
-                    int len;
-                    while ((len = is.read(buffer)) != -1) {
-                        if (isCancelled.get())
-                            return;
-
-                        Log.e("Edwin", "len = " + len);
-
-                        out.write(buffer, 0, len);
-                        out.flush();
-                    }
+//                    out = new ByteArrayOutputStream(2048);
+//                    byte[] buffer = new byte[2048];
+//                    int len;
+//                    while ((len = is.read(buffer)) != -1) {
+//                        if (isCancelled.get())
+//                            return;
+//                        out.write(buffer, 0, len);
+//                        out.flush();
+//                    }
 
                     Map<String, String> headers = new HashMap<>();
 
@@ -293,13 +293,15 @@ class RealCall implements Call {
 
                     final Response response = new Response.Builder()
                             .request(request)
-                            .body(out.toByteArray())
+                            .lenght(connection.getContentLength())
+                            .inputStream(is)
+//                            .body(out.toByteArray())
                             .code(status)
                             .header(headers)
                             .message("成功:" + connection.getResponseMessage())
                             .build();
 
-                    final String result = new String(out.toByteArray(), Charset.forName("UTF-8"));
+//                    final String result = new String(out.toByteArray(), Charset.forName("UTF-8"));
                     final Object o = responseCallback.parseNetworkResponse(response);
 
                     HandlerExecutor.getInstance().execute(new Runnable() {

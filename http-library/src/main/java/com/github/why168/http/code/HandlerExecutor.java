@@ -6,6 +6,8 @@ import android.os.Looper;
 import java.util.concurrent.Executor;
 
 /**
+ * HandlerExecutor
+ *
  * @author Edwin.Wu
  * @version 2017/6/13 15:50
  * @since JDK1.8

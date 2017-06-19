@@ -1,6 +1,8 @@
 package com.github.why168.http.util;
 
 /**
+ * StringUtils
+ *
  * @author Edwin.Wu
  * @version 2017/6/15 21:48
  * @since JDK1.8

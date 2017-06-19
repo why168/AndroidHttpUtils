@@ -1,6 +1,8 @@
 package com.github.why168.http;
 
 /**
+ * StringCallback
+ *
  * @author Edwin.Wu
  * @version 2017/6/15 21:56
  * @since JDK1.8

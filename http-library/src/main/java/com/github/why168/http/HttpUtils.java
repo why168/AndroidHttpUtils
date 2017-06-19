@@ -1,6 +1,8 @@
 package com.github.why168.http;
 
 /**
+ * HttpUtils
+ *
  * @author Edwin.Wu
  * @version 2017/6/13 16:23
  * @since JDK1.8

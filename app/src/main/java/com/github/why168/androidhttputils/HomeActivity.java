@@ -1,15 +1,20 @@
 package com.github.why168.androidhttputils;
 
+import android.Manifest;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.why168.http.BitmapCallback;
 import com.github.why168.http.Call;
+import com.github.why168.http.FileCallback;
 import com.github.why168.http.HttpUtils;
 import com.github.why168.http.JsonCallback;
 import com.github.why168.http.Request;
@@ -18,10 +23,15 @@ import com.github.why168.http.StringCallback;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+
+import kr.co.namee.permissiongen.PermissionFail;
+import kr.co.namee.permissiongen.PermissionGen;
+import kr.co.namee.permissiongen.PermissionSuccess;
 
 public class HomeActivity extends AppCompatActivity {
     private TextView tv_text;
@@ -124,21 +134,31 @@ public class HomeActivity extends AppCompatActivity {
 
         // http://jubi.com/api/v1/ticker?coin=mryc
         Request request = new Request.Builder()
-                .url("http://124.193.230.12/imtt.dd.qq.com/16891/A1BFDC1BD905CEF01F3076509F920FD3.apk?mkey=59424b6446b6ee89&f=ae12&c=0&fsname=com.tencent.shootgame_1.2.33.7260_337260.apk&csr=1bbd&p=.apk")
+//                .url("http://124.193.230.12/imtt.dd.qq.com/16891/A1BFDC1BD905CEF01F3076509F920FD3.apk?mkey=59424b6446b6ee89&f=ae12&c=0&fsname=com.tencent.shootgame_1.2.33.7260_337260.apk&csr=1bbd&p=.apk")
+                .url("http://124.193.230.12/imtt.dd.qq.com/16891/3EC8D23CFE6DC65DCA209E5E732ADE93.apk?mkey=5947105e46b6ee89&f=6e20&c=0&fsname=com.u17.comic.phone_3.3.2.1_3320100.apk&csr=1bbd&p=.apk")
                 .method("GET")
                 .headers(headers)
                 .build();
 
+
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+
         Call call = goHttp.newCall(request);
-        call.enqueue(new StringCallback() {
+        call.enqueue(new FileCallback(path, System.currentTimeMillis() + ".apk") {
             @Override
             public void onFailure(Exception e) {
-                tv_text.setText(e.toString());
+                Log.e("Edwin", e.toString());
             }
 
             @Override
-            public void onSuccessful(Response response, String results) throws IOException {
-                tv_text.setText("GET_" + results);
+            public void onSuccessful(Response response, File results) throws IOException {
+                Log.e("Edwin",response.toString());
+                Log.e("Edwin", results.getAbsolutePath());
+            }
+
+            @Override
+            public void onProgress(long progress, long total) {
+                Log.e("Edwin", "progress = " + progress + " total = " + total);
             }
         });
 
@@ -181,8 +201,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onGetFile(View view) {
-        Log.e("Edwin", "onGetFile");
-        getFileHttp();
+        openGroupPermission();
     }
 
     public void onStop(View view) {
@@ -196,4 +215,29 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
+    @PermissionSuccess(requestCode = 100)
+    public void openGroupSuccess() {
+        Log.e("Edwin", "onGetFile");
+        getFileHttp();
+    }
+
+    @PermissionFail(requestCode = 100)
+    private void openGroupFail() {
+        Toast.makeText(this, "Group permission is not granted", Toast.LENGTH_SHORT).show();
+    }
+
+    public void openGroupPermission() {
+        PermissionGen
+                .with(this)
+                .addRequestCode(100)
+                .permissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .request();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionGen.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
 }

@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 /**
+ * BitmapCallback
+ *
  * @author Edwin.Wu
  * @version 2017/6/15 22:57
  * @since JDK1.8

@@ -1,6 +1,6 @@
 package com.github.why168.http;
 
-import java.util.Arrays;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -16,6 +16,8 @@ public class Response {
     private final String message;
     private final Map<String, String> headers;
     private final byte[] body;
+    private final long length;
+    private final InputStream inputStream;
 
     public Response(Builder builder) {
         request = builder.request;
@@ -23,6 +25,8 @@ public class Response {
         message = builder.message;
         headers = builder.headers;
         body = builder.body;
+        inputStream = builder.inputStream;
+        length = builder.length;
     }
 
     public static class Builder {
@@ -31,6 +35,8 @@ public class Response {
         private String message;
         private Map<String, String> headers;
         private byte[] body;
+        private InputStream inputStream;
+        private long length;
 
         public Builder() {
         }
@@ -60,6 +66,16 @@ public class Response {
             return this;
         }
 
+        public Builder inputStream(InputStream inputStream) {
+            this.inputStream = inputStream;
+            return this;
+        }
+
+        public Builder lenght(long length) {
+            this.length = length;
+            return this;
+        }
+
         public Response build() {
             return new Response(this);
         }
@@ -85,6 +101,14 @@ public class Response {
         return body;
     }
 
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    public long getLength() {
+        return length;
+    }
+
     @Override
     public String toString() {
         return "Response{" +
@@ -92,7 +116,7 @@ public class Response {
                 ", code=" + code +
                 ", message='" + message + '\'' +
                 ", headers=" + headers +
-                ", body=" + Arrays.toString(body) +
+                ", body length=" + length +
                 '}';
     }
 }
