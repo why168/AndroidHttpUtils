@@ -70,6 +70,20 @@ public class HttpDispatcher {
         return readyAsyncCalls.size();
     }
 
+    public synchronized void cancelWithTAG(String tag) {
+        for (RealCall.AsyncCall call : readyAsyncCalls) {
+            if (tag.equalsIgnoreCase(call.name)) {
+                call.cancel();
+                break;
+            }
+        }
+        for (RealCall.AsyncCall call : runningAsyncCalls) {
+            if (tag.equalsIgnoreCase(call.name)) {
+                call.cancel();
+            }
+        }
+    }
+
     public synchronized void cancelAll() {
         for (RealCall.AsyncCall call : readyAsyncCalls) {
             call.cancel();

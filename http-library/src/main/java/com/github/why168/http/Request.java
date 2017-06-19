@@ -15,6 +15,7 @@ public final class Request {
     private final String method;
     private final Map<String, String> headers;
     private final byte[] body;
+    private final String tag;
 
 
     private Request(Builder builder) {
@@ -22,6 +23,7 @@ public final class Request {
         this.method = builder.method;
         this.headers = builder.headers;
         this.body = builder.body;
+        this.tag = builder.tag;
     }
 
     public String getUrl() {
@@ -40,11 +42,16 @@ public final class Request {
         return body;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
     public static class Builder {
         private String url;
         private String method;
         private Map<String, String> headers;
         private byte[] body;
+        private String tag;
 
 
         public Builder() {
@@ -69,9 +76,15 @@ public final class Request {
             return this;
         }
 
-        public Builder bodys(byte[] bodys) {
-            if (bodys == null) throw new NullPointerException("body == null");
-            this.body = bodys;
+        public Builder body(byte[] body) {
+            if (body == null) throw new NullPointerException("body == null");
+            this.body = body;
+            return this;
+        }
+
+        public Builder tag(String tag) {
+            if (tag == null) throw new NullPointerException("tag == null");
+            this.tag = tag;
             return this;
         }
 
@@ -88,7 +101,8 @@ public final class Request {
                 "url='" + url + '\'' +
                 ", method='" + method + '\'' +
                 ", headers=" + headers +
-                ", body=" + Arrays.toString(body) +
+                ", body length=" + Arrays.toString(body) +
+                ", tag='" + tag + '\'' +
                 '}';
     }
 }

@@ -2,6 +2,8 @@ package com.github.why168.http;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -15,7 +17,19 @@ public abstract class JsonCallback extends Callback<JSONObject> {
 
     @Override
     public JSONObject parseNetworkResponse(Response response, AtomicBoolean isCancelled) throws Exception {
-        String results = new String(response.getBody());
-        return new JSONObject(results);
+        InputStream is = response.getInputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream(2048);
+        byte[] buffer = new byte[2048];
+        int len = 0;
+        while ((len = is.read(buffer)) != -1) {
+            if (isCancelled.get()) {
+                throw new RuntimeException("http cancel");
+            }
+            out.write(buffer, 0, len);
+        }
+        out.flush();
+        is.close();
+        out.close();
+        return new JSONObject(new String(out.toByteArray()));
     }
 }

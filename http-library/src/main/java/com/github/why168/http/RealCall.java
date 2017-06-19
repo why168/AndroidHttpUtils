@@ -7,7 +7,6 @@ import android.util.Log;
 import com.github.why168.http.code.HandlerExecutor;
 import com.github.why168.http.util.StringUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +50,12 @@ class RealCall implements Call {
 
     @Override
     public void enqueue(Callback responseCallback) {
-        client.getDispatcher().enqueue(new AsyncCall(responseCallback));
+        String tag = request.getTag();
+        if (TextUtils.isEmpty(tag)) {
+            client.getDispatcher().enqueue(new AsyncCall(responseCallback));
+        } else {
+            client.getDispatcher().enqueue(new AsyncCall(responseCallback, tag));
+        }
     }
 
     @Override
@@ -86,6 +90,11 @@ class RealCall implements Call {
             this.responseCallback = responseCallback;
         }
 
+        private AsyncCall(Callback responseCallback, String name) {
+            super(name);
+            this.responseCallback = responseCallback;
+        }
+
         RealCall get() {
             return RealCall.this;
         }
@@ -111,11 +120,9 @@ class RealCall implements Call {
         }
 
         private void postHttpRequest(Request request, HttpUtils httpUtils) {
-
             HttpURLConnection connection = null;
             InputStream is = null;
             DataOutputStream dataOut = null;
-            ByteArrayOutputStream out = null;
             try {
                 checkIfCancelled();
 
@@ -132,7 +139,6 @@ class RealCall implements Call {
                 dataOut = new DataOutputStream(connection.getOutputStream());
                 byte[] body = request.getBody();
                 if (body != null) {
-
                     checkIfCancelled();
 
                     dataOut.write(body);
@@ -146,7 +152,7 @@ class RealCall implements Call {
                     throw new IOException("Could not retrieve response code from HttpUrlConnection.");
                 }
 
-                if (responseCode >= 200 && responseCode <= 300) {
+                if (responseCode >= 200 && responseCode < 300) {
                     // Log
                     Log.e("Edwin", "responseCode = " + responseCode + "\n" +
                             "contentLength = " + StringUtils.getPrintSize(connection.getContentLength()) + "\n" +
@@ -169,19 +175,7 @@ class RealCall implements Call {
 
                     checkIfCancelled();
 
-                    out = new ByteArrayOutputStream(2048);
-                    byte[] buffer = new byte[2048];
-                    int len;
-                    while ((len = is.read(buffer)) != -1) {
-
-                        checkIfCancelled();
-
-                        out.write(buffer, 0, len);
-                        out.flush();
-                    }
-
                     Map<String, String> headers = new HashMap<>();
-
                     Map<String, List<String>> headerFields = connection.getHeaderFields();
                     for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
                         String key = entry.getKey();
@@ -195,7 +189,6 @@ class RealCall implements Call {
                     final Response response = new Response.Builder()
                             .request(request)
                             .inputStream(is)
-                            .body(out.toByteArray())
                             .code(responseCode)
                             .header(headers)
                             .message("成功:" + connection.getResponseMessage())
@@ -236,8 +229,6 @@ class RealCall implements Call {
                         dataOut.close();
                     if (is != null)
                         is.close();
-                    if (out != null)
-                        out.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -251,7 +242,6 @@ class RealCall implements Call {
         private void getHttpRequest(Request request, HttpUtils httpUtils) {
             HttpURLConnection connection = null;
             InputStream is = null;
-            ByteArrayOutputStream out = null;
             try {
 
                 checkIfCancelled();
@@ -273,7 +263,7 @@ class RealCall implements Call {
                     throw new IOException("Could not retrieve response code from HttpUrlConnection.");
                 }
 
-                if (responseCode >= 200 && responseCode <= 300) {
+                if (responseCode >= 200 && responseCode < 300) {
 
                     // Log
                     Log.e("Edwin", "responseCode = " + responseCode + "\n" +
@@ -297,30 +287,6 @@ class RealCall implements Call {
 
                     checkIfCancelled();
 
-//                    out = new ByteArrayOutputStream(2048);
-//                    byte[] buffer = new byte[2048];
-//                    int len = 0;
-//                    long sum = 0;
-//                    while ((len = is.read(buffer)) != -1) {
-//
-//                        if (isCancelled.get())
-//                            return;
-//
-//                        final long finalSum = sum;
-//                        final HttpURLConnection finalConnection = connection;
-//
-//                        HandlerExecutor.getInstance().execute(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                responseCallback.onProgress(finalSum, finalConnection.getContentLength());
-//                            }
-//                        });
-//
-//
-//                        out.write(buffer, 0, len);
-//                    }
-//                    out.flush();
-
                     Map<String, String> headers = new HashMap<>();
 
                     Map<String, List<String>> headerFields = connection.getHeaderFields();
@@ -337,13 +303,12 @@ class RealCall implements Call {
                             .request(request)
                             .lenght(connection.getContentLength())
                             .inputStream(is)
-//                            .body(out.toByteArray())
                             .code(responseCode)
                             .header(headers)
                             .message("成功:" + connection.getResponseMessage())
                             .build();
 
-                    final Object o = responseCallback.parseNetworkResponse(response,isCancelled);
+                    final Object o = responseCallback.parseNetworkResponse(response, isCancelled);
 
                     HandlerExecutor.getInstance().execute(new Runnable() {
                         @Override
@@ -369,8 +334,6 @@ class RealCall implements Call {
                 try {
                     if (is != null)
                         is.close();
-                    if (out != null)
-                        out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {

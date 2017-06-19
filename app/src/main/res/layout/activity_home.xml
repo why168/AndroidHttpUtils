@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:text="Hello World!" />
     </ScrollView>
+
     <ImageView
         android:id="@+id/image"
         android:layout_width="wrap_content"
@@ -45,6 +46,17 @@
         android:onClick="onStop"
         android:text="取消所有请求" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onStopA"
+        android:text="取消A请求" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onStopB"
+        android:text="取消B请求" />
 
     <Button
         android:layout_width="wrap_content"

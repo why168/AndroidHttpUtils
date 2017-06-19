@@ -15,7 +15,6 @@ public class Response {
     private final int code;
     private final String message;
     private final Map<String, String> headers;
-    private final byte[] body;
     private final long length;
     private final InputStream inputStream;
 
@@ -24,7 +23,6 @@ public class Response {
         code = builder.code;
         message = builder.message;
         headers = builder.headers;
-        body = builder.body;
         inputStream = builder.inputStream;
         length = builder.length;
     }
@@ -34,7 +32,6 @@ public class Response {
         private int code = -1;
         private String message;
         private Map<String, String> headers;
-        private byte[] body;
         private InputStream inputStream;
         private long length;
 
@@ -58,11 +55,6 @@ public class Response {
 
         public Builder header(Map<String, String> headers) {
             this.headers = headers;
-            return this;
-        }
-
-        public Builder body(byte[] body) {
-            this.body = body;
             return this;
         }
 
@@ -97,10 +89,6 @@ public class Response {
         return headers;
     }
 
-    public byte[] getBody() {
-        return body;
-    }
-
     public InputStream getInputStream() {
         return inputStream;
     }
@@ -116,7 +104,7 @@ public class Response {
                 ", code=" + code +
                 ", message='" + message + '\'' +
                 ", headers=" + headers +
-                ", body length=" + length +
+                ", length=" + length +
                 '}';
     }
 }

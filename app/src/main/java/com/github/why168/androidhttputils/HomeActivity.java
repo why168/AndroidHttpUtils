@@ -35,7 +35,7 @@ import kr.co.namee.permissiongen.PermissionSuccess;
 
 public class HomeActivity extends AppCompatActivity {
     private TextView tv_text;
-    private HttpUtils goHttp;
+    private HttpUtils androidHttp;
     private ImageView image;
 
     // 魂斗罗下载 http://124.193.230.12/imtt.dd.qq.com/16891/A1BFDC1BD905CEF01F3076509F920FD3.apk?mkey=59424b6446b6ee89&f=ae12&c=0&fsname=com.tencent.shootgame_1.2.33.7260_337260.apk&csr=1bbd&p=.apk
@@ -47,7 +47,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         tv_text = (TextView) findViewById(R.id.tv_text);
         image = (ImageView) findViewById(R.id.image);
-        goHttp = new HttpUtils();
+        androidHttp = new HttpUtils();
 
     }
 
@@ -63,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
                 .headers(headers)
                 .build();
 
-        Call call = goHttp.newCall(request);
+        Call call = androidHttp.newCall(request);
         call.enqueue(new JsonCallback() {
             @Override
             public void onFailure(Exception e) {
@@ -105,10 +105,10 @@ public class HomeActivity extends AppCompatActivity {
                 .url("http://dev.xiaobee1.com/api/verification/")
                 .method("POST")
                 .headers(headers)
-                .bodys(body.getBytes())
+                .body(body.getBytes())
                 .build();
 
-        Call call = goHttp.newCall(request);
+        Call call = androidHttp.newCall(request);
         call.enqueue(new StringCallback() {
             @Override
             public void onFailure(Exception e) {
@@ -138,13 +138,14 @@ public class HomeActivity extends AppCompatActivity {
                 .url("http://124.193.230.12/imtt.dd.qq.com/16891/3EC8D23CFE6DC65DCA209E5E732ADE93.apk?mkey=5947105e46b6ee89&f=6e20&c=0&fsname=com.u17.comic.phone_3.3.2.1_3320100.apk&csr=1bbd&p=.apk")
                 .method("GET")
                 .headers(headers)
+                .tag("tagNameA")
                 .build();
 
 
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 
-        Call call = goHttp.newCall(request);
-        call.enqueue(new FileCallback(path, System.currentTimeMillis() + ".apk") {
+        Call call = androidHttp.newCall(request);
+        call.enqueue(new FileCallback(path, System.currentTimeMillis() + "A.apk") {
             @Override
             public void onFailure(Exception e) {
                 Log.e("Edwin", e.toString());
@@ -152,7 +153,7 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessful(Response response, File results) throws IOException {
-                Log.e("Edwin",response.toString());
+                Log.e("Edwin", response.toString());
 
                 Log.e("Edwin", results.getAbsolutePath());
 
@@ -164,6 +165,31 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        request = new Request.Builder()
+                .url("http://124.193.230.12/imtt.dd.qq.com/16891/3EC8D23CFE6DC65DCA209E5E732ADE93.apk?mkey=5947105e46b6ee89&f=6e20&c=0&fsname=com.u17.comic.phone_3.3.2.1_3320100.apk&csr=1bbd&p=.apk")
+                .method("GET")
+                .headers(headers)
+                .tag("tagNameB")
+                .build();
+
+        androidHttp.newCall(request).enqueue(new FileCallback(path, System.currentTimeMillis() + "B.apk") {
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("Edwin", "B------------- " + e.toString());
+            }
+
+            @Override
+            public void onSuccessful(Response response, File results) throws IOException {
+                Log.e("Edwin", "B------------- " + response.toString());
+
+                Log.e("Edwin", "B------------- " + results.getAbsolutePath());
+            }
+
+            @Override
+            public void onProgress(long progress, long total) {
+                Log.e("Edwin", "B------------- progress = " + progress + " total = " + total);
+            }
+        });
     }
 
     public void onGetBitmap() {
@@ -178,7 +204,7 @@ public class HomeActivity extends AppCompatActivity {
                 .headers(headers)
                 .build();
 
-        Call call = goHttp.newCall(request);
+        Call call = androidHttp.newCall(request);
         call.enqueue(new BitmapCallback() {
             @Override
             public void onFailure(Exception e) {
@@ -208,7 +234,18 @@ public class HomeActivity extends AppCompatActivity {
 
     public void onStop(View view) {
         Log.e("Edwin", "onStop");
-        goHttp.getDispatcher().cancelAll();
+        androidHttp.getDispatcher().cancelAll();
+    }
+
+    public void onStopA(View view) {
+        Log.e("Edwin", "onStopA");
+        androidHttp.getDispatcher().cancelWithTAG("tagNameA");
+
+    }
+
+    public void onStopB(View view) {
+        Log.e("Edwin", "onStopB");
+        androidHttp.getDispatcher().cancelWithTAG("tagNameB");
 
     }
 
