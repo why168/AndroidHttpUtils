@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="加载中..."
+        android:text="加载中...\n\n倒计时3秒"
         android:textColor="#ff0303"
         android:textSize="8pt" />
 
@@ -21,4 +21,23 @@
         android:gravity="center"
         android:textColor="#ff0303"
         android:textSize="15pt" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="套路\n点击进入"
+        android:textColor="#ff0303"
+        android:textSize="15sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="卧槽，开权限啊～！！\n快点我重新开启权限"
+        android:textColor="#ff0303"
+        android:textSize="15sp"
+        android:visibility="gone" />
 </LinearLayout>

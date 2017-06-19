@@ -20,6 +20,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!--exported:要求必须为false，为true则会报安全异常。-->
+        <!--grantUriPermissions:true，表示授予 URI 临时访问权限。-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.github.why168.androidhttputils.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
+
         <activity android:name=".WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +41,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity" />
+        <activity
+            android:name=".callback.StringCallbackActivity"
+            android:label="StringCallback" />
+        <activity
+            android:name=".callback.JsonCallbackActivity"
+            android:label="JsonCallback" />
+        <activity
+            android:name=".callback.FileCallbackActivity"
+            android:label="FileCallback" />
+        <activity
+            android:name=".callback.BitmapCallbackActivity"
+            android:label="BitmapCallback" />
     </application>
 
 </manifest>

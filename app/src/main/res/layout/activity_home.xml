@@ -3,64 +3,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center|top"
     android:orientation="vertical"
     tools:context="com.github.why168.androidhttputils.HomeActivity">
 
-    <ScrollView
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="100dp">
-
-        <TextView
-            android:id="@+id/tv_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hello World!" />
-    </ScrollView>
-
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:gravity="center"
+        android:text="4个Callback演示代码"
+        android:textAllCaps="false"
+        android:textColor="@color/colorAccent"
+        android:textSize="25sp"
+        android:textStyle="bold" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:onClick="startStringCallback"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onGetJSONObject"
-        android:text="onGetJSONObject" />
+        android:text="StringCallback"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:onClick="startJsonCallback"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onPost"
-        android:text="post" />
+        android:text="JsonCallback"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:onClick="startFileCallback"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onGetFile"
-        android:text="get 下载文件" />
+        android:text="FileCallback"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:onClick="startBitmapCallback"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onStop"
-        android:text="取消所有请求" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onStopA"
-        android:text="取消A请求" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onStopB"
-        android:text="取消B请求" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onGetBitmap"
-        android:text="请求图片" />
+        android:text="BitmapCallback"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 </LinearLayout>
