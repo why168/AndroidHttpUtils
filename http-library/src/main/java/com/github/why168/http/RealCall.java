@@ -217,12 +217,24 @@ class RealCall implements Call {
                 }
             } catch (final Exception e) {
                 e.printStackTrace();
-                HandlerExecutor.getInstance().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        responseCallback.onFailure(e);
+                if (e instanceof HttpException) {
+                    final HttpException httpException = (HttpException) e;
+                    if (httpException.type.equals(HttpException.ErrorType.CANCEL)) {
+                        HandlerExecutor.getInstance().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                responseCallback.onCanceled(httpException);
+                            }
+                        });
                     }
-                });
+                } else {
+                    HandlerExecutor.getInstance().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            responseCallback.onFailure(e);
+                        }
+                    });
+                }
             } finally {
                 try {
                     if (dataOut != null)
@@ -246,7 +258,9 @@ class RealCall implements Call {
 
                 checkIfCancelled();
 
+
                 connection = (HttpURLConnection) new URL(request.getUrl()).openConnection();
+
                 connection.setRequestMethod(request.getMethod());
                 connection.setConnectTimeout(httpUtils.getConnectTimeout());
                 connection.setReadTimeout(httpUtils.getReadTimeout());
@@ -308,7 +322,8 @@ class RealCall implements Call {
                             .message("成功:" + connection.getResponseMessage())
                             .build();
 
-                    final Object o = responseCallback.parseNetworkResponse(response, isCancelled);
+                    final Object o;
+                    o = responseCallback.parseNetworkResponse(response, isCancelled);
 
                     HandlerExecutor.getInstance().execute(new Runnable() {
                         @Override
@@ -324,12 +339,24 @@ class RealCall implements Call {
 
             } catch (final Exception e) {
                 e.printStackTrace();
-                HandlerExecutor.getInstance().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        responseCallback.onFailure(e);
+                if (e instanceof HttpException) {
+                    final HttpException httpException = (HttpException) e;
+                    if (httpException.type.equals(HttpException.ErrorType.CANCEL)) {
+                        HandlerExecutor.getInstance().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                responseCallback.onCanceled(httpException);
+                            }
+                        });
                     }
-                });
+                } else {
+                    HandlerExecutor.getInstance().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            responseCallback.onFailure(e);
+                        }
+                    });
+                }
             } finally {
                 try {
                     if (is != null)
@@ -347,9 +374,9 @@ class RealCall implements Call {
 
     }
 
-    private void checkIfCancelled() {
+    private void checkIfCancelled() throws HttpException {
         if (isCancelled.get()) {
-            throw new RuntimeException("http cancel");
+            throw new HttpException(HttpException.ErrorType.CANCEL, "http cancel");
         }
     }
 

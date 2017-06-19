@@ -9,12 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.why168.http.BitmapCallback;
 import com.github.why168.http.Call;
 import com.github.why168.http.FileCallback;
+import com.github.why168.http.HttpException;
 import com.github.why168.http.HttpUtils;
 import com.github.why168.http.JsonCallback;
 import com.github.why168.http.Request;
@@ -34,7 +34,6 @@ import kr.co.namee.permissiongen.PermissionGen;
 import kr.co.namee.permissiongen.PermissionSuccess;
 
 public class HomeActivity extends AppCompatActivity {
-    private TextView tv_text;
     private HttpUtils androidHttp;
     private ImageView image;
 
@@ -45,7 +44,6 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        tv_text = (TextView) findViewById(R.id.tv_text);
         image = (ImageView) findViewById(R.id.image);
         androidHttp = new HttpUtils();
 
@@ -67,7 +65,7 @@ public class HomeActivity extends AppCompatActivity {
         call.enqueue(new JsonCallback() {
             @Override
             public void onFailure(Exception e) {
-                tv_text.setText(e.toString());
+
             }
 
             @Override
@@ -113,13 +111,13 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onFailure(Exception e) {
                 String s = e.toString();
-                tv_text.setText(s);
+
                 System.out.println(s);
             }
 
             @Override
             public void onSuccessful(Response response, String results) throws IOException {
-                tv_text.setText("POST_" + results);
+
             }
         });
         //TODO 取消单个请求
@@ -160,6 +158,12 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onCanceled(HttpException e) {
+                Log.e("Edwin", "下载文件取消" + e.getMessage());
+            }
+
+
+            @Override
             public void onProgress(long progress, long total) {
                 Log.e("Edwin", "progress = " + progress + " total = " + total);
             }
@@ -183,6 +187,11 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("Edwin", "B------------- " + response.toString());
 
                 Log.e("Edwin", "B------------- " + results.getAbsolutePath());
+            }
+
+            @Override
+            public void onCanceled(HttpException e) {
+                Log.e("Edwin", "B-------------下载文件取消" + e.getMessage());
             }
 
             @Override
@@ -256,7 +265,6 @@ public class HomeActivity extends AppCompatActivity {
 
     @PermissionSuccess(requestCode = 100)
     public void openGroupSuccess() {
-        Log.e("Edwin", "onGetFile");
         getFileHttp();
     }
 

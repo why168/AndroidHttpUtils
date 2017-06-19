@@ -1,5 +1,7 @@
 package com.github.why168.http;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,11 +23,14 @@ public abstract class Callback<T> {
     private String destFileName;
 
 
-    public abstract T parseNetworkResponse(Response response, AtomicBoolean isCancelled) throws Exception;
+    public abstract T parseNetworkResponse(Response response, AtomicBoolean isCancelled) throws HttpException, IOException, JSONException;
 
     public abstract void onFailure(Exception e);
 
     public abstract void onSuccessful(Response response, T results) throws IOException;
+
+    public void onCanceled(HttpException e) {
+    }
 
     public void onProgress(long progress, long total) {
 
