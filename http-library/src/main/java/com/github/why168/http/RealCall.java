@@ -1,22 +1,25 @@
 package com.github.why168.http;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.github.why168.http.code.HandlerExecutor;
 import com.github.why168.http.util.StringUtils;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.jar.JarInputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipInputStream;
@@ -71,11 +74,15 @@ class RealCall implements Call {
         return new RealCall(client, request);
     }
 
+    /**
+     * 异步任务
+     */
     final class AsyncCall extends NickRunnable {
         private final Callback responseCallback;
 
+        @SuppressLint("SimpleDateFormat")
         private AsyncCall(Callback responseCallback) {
-            super("xHttp %s", System.currentTimeMillis());
+            super("AndroidHttp %s", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(Calendar.getInstance().getTime()));
             this.responseCallback = responseCallback;
         }
 
@@ -94,23 +101,24 @@ class RealCall implements Call {
                 executed = true;
             }
 
-            if (isCancelled.get())
-                return;
             String method = request.getMethod();
             if ("GET".equalsIgnoreCase(method)) {
                 getHttpRequest(request, client);
             } else if ("POST".equalsIgnoreCase(method)) {
                 postHttpRequest(request, client);
             }
+
         }
 
         private void postHttpRequest(Request request, HttpUtils httpUtils) {
+
             HttpURLConnection connection = null;
             InputStream is = null;
-            BufferedOutputStream bos = null;
+            DataOutputStream dataOut = null;
             ByteArrayOutputStream out = null;
             try {
-//                String encode = URLEncoder.encode(str, "utf-8");
+                checkIfCancelled();
+
                 connection = (HttpURLConnection) new URL(request.getUrl()).openConnection();
                 connection.setRequestMethod(request.getMethod());
                 connection.setConnectTimeout(httpUtils.getConnectTimeout());
@@ -118,17 +126,26 @@ class RealCall implements Call {
                 connection.setDoOutput(true);//设置是否向httpUrlConnection输出
                 connection.setDoInput(true);//设置是否向httpUrlConnection读入
                 addHeader(connection, request.getHeaders());
-                if (isCancelled.get())
-                    return;
-                bos = new BufferedOutputStream(connection.getOutputStream());
+
+                checkIfCancelled();
+
+                dataOut = new DataOutputStream(connection.getOutputStream());
                 byte[] body = request.getBody();
                 if (body != null) {
-                    if (isCancelled.get())
-                        return;
-                    bos.write(body);
+
+                    checkIfCancelled();
+
+                    dataOut.write(body);
                 }
-                bos.flush();
+                dataOut.flush();
                 final int responseCode = connection.getResponseCode();
+
+                if (responseCode == -1) {
+                    // -1 is returned by getResponseCode() if the response code could not be retrieved.
+                    // Signal to the caller that something was wrong with the connection.
+                    throw new IOException("Could not retrieve response code from HttpUrlConnection.");
+                }
+
                 if (responseCode >= 200 && responseCode <= 300) {
                     // Log
                     Log.e("Edwin", "responseCode = " + responseCode + "\n" +
@@ -139,24 +156,25 @@ class RealCall implements Call {
                     if (!TextUtils.isEmpty(encoding)) {
                         if ("gzip".equalsIgnoreCase(encoding)) {
                             is = new GZIPInputStream(connection.getInputStream());
-                        } else if ("deflate".equalsIgnoreCase(encoding)) {
-                            is = new InflaterInputStream(connection.getInputStream());
                         } else if ("zip".equalsIgnoreCase(encoding)) {
                             is = new ZipInputStream(connection.getInputStream());
+                        } else if ("jar".equalsIgnoreCase(encoding)) {
+                            is = new JarInputStream(connection.getInputStream());
+                        } else if ("deflate".equalsIgnoreCase(encoding)) {
+                            is = new InflaterInputStream(connection.getInputStream());
                         }
                     } else {
                         is = connection.getInputStream();
                     }
-                    if (isCancelled.get())
-                        return;
+
+                    checkIfCancelled();
+
                     out = new ByteArrayOutputStream(2048);
                     byte[] buffer = new byte[2048];
                     int len;
                     while ((len = is.read(buffer)) != -1) {
-                        if (isCancelled.get())
-                            return;
 
-                        Log.e("Edwin", "len = " + len);
+                        checkIfCancelled();
 
                         out.write(buffer, 0, len);
                         out.flush();
@@ -183,8 +201,7 @@ class RealCall implements Call {
                             .message("成功:" + connection.getResponseMessage())
                             .build();
 
-                    final String result = new String(out.toByteArray(), Charset.forName("UTF-8"));
-                    final Object o = responseCallback.parseNetworkResponse(response);
+                    final Object o = responseCallback.parseNetworkResponse(response, isCancelled);
 
                     HandlerExecutor.getInstance().execute(new Runnable() {
                         @Override
@@ -215,8 +232,8 @@ class RealCall implements Call {
                 });
             } finally {
                 try {
-                    if (bos != null)
-                        bos.close();
+                    if (dataOut != null)
+                        dataOut.close();
                     if (is != null)
                         is.close();
                     if (out != null)
@@ -236,20 +253,30 @@ class RealCall implements Call {
             InputStream is = null;
             ByteArrayOutputStream out = null;
             try {
+
+                checkIfCancelled();
+
                 connection = (HttpURLConnection) new URL(request.getUrl()).openConnection();
                 connection.setRequestMethod(request.getMethod());
                 connection.setConnectTimeout(httpUtils.getConnectTimeout());
                 connection.setReadTimeout(httpUtils.getReadTimeout());
                 connection.setDoInput(true);//设置是否向httpUrlConnection读入
                 addHeader(connection, request.getHeaders());
-                if (isCancelled.get())
-                    return;
 
-                int status = connection.getResponseCode();
-                if (status >= 200 && status <= 300) {
+                checkIfCancelled();
+
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == -1) {
+                    // -1 is returned by getResponseCode() if the response code could not be retrieved.
+                    // Signal to the caller that something was wrong with the connection.
+                    throw new IOException("Could not retrieve response code from HttpUrlConnection.");
+                }
+
+                if (responseCode >= 200 && responseCode <= 300) {
 
                     // Log
-                    Log.e("Edwin", "responseCode = " + status + "\n" +
+                    Log.e("Edwin", "responseCode = " + responseCode + "\n" +
                             "contentLength = " + StringUtils.getPrintSize(connection.getContentLength()) + "\n" +
                             request.toString());
 
@@ -257,27 +284,42 @@ class RealCall implements Call {
                     if (!TextUtils.isEmpty(encoding)) {
                         if ("gzip".equalsIgnoreCase(encoding)) {
                             is = new GZIPInputStream(connection.getInputStream());
-                        } else if ("deflate".equalsIgnoreCase(encoding)) {
-                            is = new InflaterInputStream(connection.getInputStream());
                         } else if ("zip".equalsIgnoreCase(encoding)) {
                             is = new ZipInputStream(connection.getInputStream());
+                        } else if ("jar".equalsIgnoreCase(encoding)) {
+                            is = new JarInputStream(connection.getInputStream());
+                        } else if ("deflate".equalsIgnoreCase(encoding)) {
+                            is = new InflaterInputStream(connection.getInputStream());
                         }
                     } else {
                         is = connection.getInputStream();
                     }
 
-                    if (isCancelled.get())
-                        return;
+                    checkIfCancelled();
 
 //                    out = new ByteArrayOutputStream(2048);
 //                    byte[] buffer = new byte[2048];
-//                    int len;
+//                    int len = 0;
+//                    long sum = 0;
 //                    while ((len = is.read(buffer)) != -1) {
+//
 //                        if (isCancelled.get())
 //                            return;
+//
+//                        final long finalSum = sum;
+//                        final HttpURLConnection finalConnection = connection;
+//
+//                        HandlerExecutor.getInstance().execute(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                responseCallback.onProgress(finalSum, finalConnection.getContentLength());
+//                            }
+//                        });
+//
+//
 //                        out.write(buffer, 0, len);
-//                        out.flush();
 //                    }
+//                    out.flush();
 
                     Map<String, String> headers = new HashMap<>();
 
@@ -296,13 +338,12 @@ class RealCall implements Call {
                             .lenght(connection.getContentLength())
                             .inputStream(is)
 //                            .body(out.toByteArray())
-                            .code(status)
+                            .code(responseCode)
                             .header(headers)
                             .message("成功:" + connection.getResponseMessage())
                             .build();
 
-//                    final String result = new String(out.toByteArray(), Charset.forName("UTF-8"));
-                    final Object o = responseCallback.parseNetworkResponse(response);
+                    final Object o = responseCallback.parseNetworkResponse(response,isCancelled);
 
                     HandlerExecutor.getInstance().execute(new Runnable() {
                         @Override
@@ -341,7 +382,12 @@ class RealCall implements Call {
             }
         }
 
+    }
 
+    private void checkIfCancelled() {
+        if (isCancelled.get()) {
+            throw new RuntimeException("http cancel");
+        }
     }
 
     private void addHeader(HttpURLConnection connection, Map<String, String> headers) {
@@ -363,6 +409,4 @@ class RealCall implements Call {
     String redactedUrl() {
         return request.getUrl();
     }
-
-
 }

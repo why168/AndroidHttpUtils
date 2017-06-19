@@ -1,6 +1,7 @@
 package com.github.why168.http;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Callback
@@ -10,8 +11,17 @@ import java.io.IOException;
  * @since JDK1.8
  */
 public abstract class Callback<T> {
+    /**
+     * 目标文件存储的文件夹路径
+     */
+    private String destFilePath;
+    /**
+     * 目标文件存储的文件名
+     */
+    private String destFileName;
 
-    public abstract T parseNetworkResponse(Response response) throws Exception;
+
+    public abstract T parseNetworkResponse(Response response, AtomicBoolean isCancelled) throws Exception;
 
     public abstract void onFailure(Exception e);
 

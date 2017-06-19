@@ -5,6 +5,7 @@ import com.github.why168.http.code.HandlerExecutor;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * FileCallback
@@ -29,7 +30,7 @@ public abstract class FileCallback extends Callback<File> {
     }
 
     @Override
-    public File parseNetworkResponse(Response response) throws Exception {
+    public File parseNetworkResponse(Response response, AtomicBoolean isCancelled) throws Exception {
         InputStream is = response.getInputStream();
         final long length = response.getLength();
         FileOutputStream fos = null;
@@ -47,6 +48,9 @@ public abstract class FileCallback extends Callback<File> {
 
         fos = new FileOutputStream(file);
         while ((len = is.read(buf)) != -1) {
+            if (isCancelled.get()) {
+                throw new RuntimeException("http cancel");
+            }
             sum += len;
             fos.write(buf, 0, len);
             final long finalSum = sum;

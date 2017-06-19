@@ -3,6 +3,8 @@ package com.github.why168.http;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * BitmapCallback
  *
@@ -12,8 +14,9 @@ import android.graphics.BitmapFactory;
  */
 public abstract class BitmapCallback extends Callback<Bitmap> {
     @Override
-    public Bitmap parseNetworkResponse(Response response) throws Exception {
+    public Bitmap parseNetworkResponse(Response response, AtomicBoolean isCancelled) throws Exception {
         byte[] body = response.getBody();
         return BitmapFactory.decodeByteArray(body, 0, body.length);
     }
+
 }

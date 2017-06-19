@@ -1,5 +1,7 @@
 package com.github.why168.http;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * StringCallback
  *
@@ -10,7 +12,7 @@ package com.github.why168.http;
 public abstract class StringCallback extends Callback<String> {
 
     @Override
-    public String parseNetworkResponse(Response response) throws Exception {
+    public String parseNetworkResponse(Response response, AtomicBoolean isCancelled) throws Exception {
         return new String(response.getBody());
     }
 }

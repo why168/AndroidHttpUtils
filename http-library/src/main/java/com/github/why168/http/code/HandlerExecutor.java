@@ -22,7 +22,7 @@ public class HandlerExecutor implements Executor {
         return instance;
     }
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final  Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     public void execute(Runnable command) {

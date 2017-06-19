@@ -153,7 +153,9 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onSuccessful(Response response, File results) throws IOException {
                 Log.e("Edwin",response.toString());
+
                 Log.e("Edwin", results.getAbsolutePath());
+
             }
 
             @Override
@@ -240,4 +242,5 @@ public class HomeActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         PermissionGen.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
+
 }
