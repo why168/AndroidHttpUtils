@@ -2,14 +2,18 @@ package com.github.why168.androidhttputils.callback;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.why168.androidhttputils.BuildConfig;
 import com.github.why168.androidhttputils.R;
 import com.github.why168.http.Call;
 import com.github.why168.http.FileCallback;
@@ -47,12 +51,13 @@ public class FileCallbackActivity extends AppCompatActivity {
         headers.put("Content-Type", "application/octet-stream");
 
         Request request = new Request.Builder()
-                .url("http://111.202.99.11/imtt.dd.qq.com/16891/4BD2BF1F1F94E3A499D901A1A70D3F5F.apk?mkey=5948279cda6f518e&f=d573&c=0&fsname=com.haobangshou_3.2.5_45.apk&csr=1bbd&p=.apk")
+                .url("http://124.193.230.157/imtt.dd.qq.com/16891/74FED29D94FC1BDCAFB871E346995638.apk?mkey=5948a0e446b6ee89&f=10a4&c=0&fsname=com.tencent.news_5.3.80_5380.apk&csr=1bbd&p=.apk")
                 .method("GET")
                 .headers(headers)
                 .build();
 
-        String destFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+        String destFilePath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         String destFileName = System.currentTimeMillis() + ".apk";
 
         Call call = androidHttp.newCall(request);
@@ -71,9 +76,17 @@ public class FileCallbackActivity extends AppCompatActivity {
                 progressDialog.cancel();
                 progressDialog.dismiss();
 
-//                Intent intent = new Intent(Intent.ACTION_VIEW);
-//                intent.setDataAndType(Uri.fromFile(results), "application/vnd.android.package-archive");
-//                startActivity(intent);
+                /*
+                 *  下载完毕APK，安装APK
+                 *  targetSdkVersion 24以上需要适配FileProvider在应用间共享文件
+                 *  targetSdkVersion 22以上需要适配6.0 运行时权限问题
+                 */
+                Uri apkUri = FileProvider.getUriForFile(FileCallbackActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", results);
+                Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                installIntent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                startActivity(installIntent);
             }
 
             @Override

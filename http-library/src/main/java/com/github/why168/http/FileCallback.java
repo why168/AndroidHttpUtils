@@ -34,9 +34,9 @@ public abstract class FileCallback extends Callback<File> {
     public File parseNetworkResponse(Response response, AtomicBoolean isCancelled) throws HttpException,IOException {
         InputStream is = response.getInputStream();
         final long length = response.getLength();
-        FileOutputStream fos = null;
+        FileOutputStream fos;
         byte[] buf = new byte[2048];
-        int len = 0;
+        int len;
         long sum = 0;
 
         //create file
