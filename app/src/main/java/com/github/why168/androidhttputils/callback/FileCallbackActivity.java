@@ -3,17 +3,15 @@ package com.github.why168.androidhttputils.callback;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.why168.androidhttputils.BuildConfig;
+import com.github.why168.androidhttputils.utils.FileProviderUtils;
 import com.github.why168.androidhttputils.R;
 import com.github.why168.http.Call;
 import com.github.why168.http.FileCallback;
@@ -56,8 +54,7 @@ public class FileCallbackActivity extends AppCompatActivity {
                 .headers(headers)
                 .build();
 
-
-        String destFilePath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        String destFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
         String destFileName = System.currentTimeMillis() + ".apk";
 
         Call call = androidHttp.newCall(request);
@@ -72,6 +69,8 @@ public class FileCallbackActivity extends AppCompatActivity {
             @Override
             public void onSuccessful(Response response, File results) throws IOException {
                 Toast.makeText(FileCallbackActivity.this, "下载成功", Toast.LENGTH_SHORT).show();
+                Log.e("Edwin", "文件路径：" + results.getAbsolutePath());
+
                 textView.setText("文件路径：" + results.getAbsolutePath());
                 progressDialog.cancel();
                 progressDialog.dismiss();
@@ -81,12 +80,22 @@ public class FileCallbackActivity extends AppCompatActivity {
                  *  targetSdkVersion 24以上需要适配FileProvider在应用间共享文件
                  *  targetSdkVersion 22以上需要适配6.0 运行时权限问题
                  */
-                Uri apkUri = FileProvider.getUriForFile(FileCallbackActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", results);
-                Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                installIntent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-                startActivity(installIntent);
+//                Uri apkUri = FileProvider.getUriForFile(FileCallbackActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", results);
+//                Intent installIntent = new Intent(Intent.ACTION_VIEW);
+//                installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                installIntent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+//                startActivity(installIntent);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+
+                FileProviderUtils.setIntentDataAndType(FileCallbackActivity.this,
+                        intent,
+                        "application/vnd.android.package-archive",
+                        results,
+                        true);
+
+                startActivity(intent);
             }
 
             @Override

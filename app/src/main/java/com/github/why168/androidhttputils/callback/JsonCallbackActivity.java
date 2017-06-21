@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.github.why168.androidhttputils.CoinBean;
+import com.github.why168.androidhttputils.bean.CoinBean;
 import com.github.why168.androidhttputils.R;
 import com.github.why168.http.HttpUtils;
 import com.github.why168.http.JsonCallback;
