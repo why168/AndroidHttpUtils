@@ -25,7 +25,7 @@ public abstract class FileCallback extends Callback<File> {
      */
     private String destFileName;
 
-    public FileCallback(String destFilePath, String destFileName) {
+    protected FileCallback(String destFilePath, String destFileName) {
         this.destFilePath = destFilePath;
         this.destFileName = destFileName;
     }

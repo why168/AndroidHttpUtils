@@ -21,12 +21,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpDispatcher {
     private int maxRequests = 64;
-    private ExecutorService executorService;
+    private ThreadPoolExecutor executorService;
 
     private final Deque<RealCall.AsyncCall> runningAsyncCalls = new ArrayDeque<>();
     private final Deque<RealCall.AsyncCall> readyAsyncCalls = new ArrayDeque<>();
 
-    public HttpDispatcher(ExecutorService executorService) {
+    public HttpDispatcher(ThreadPoolExecutor executorService) {
         this.executorService = executorService;
     }
 

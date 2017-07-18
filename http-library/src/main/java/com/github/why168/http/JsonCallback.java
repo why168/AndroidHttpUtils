@@ -32,6 +32,9 @@ public abstract class JsonCallback extends Callback<JSONObject> {
         out.flush();
         is.close();
         out.close();
-        return new JSONObject(new String(out.toByteArray()));
+        String str = new String(out.toByteArray());
+        int i = str.indexOf("{");
+        String results = str.substring(i);
+        return new JSONObject(results);
     }
 }
