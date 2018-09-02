@@ -1,14 +1,18 @@
-# AndroidHttpUtils
+## AndroidHttpUtils
+* http-library
 
 
+<br>
+<br>
+
+## HttpCacheAndroid
+
+![Image of 示例](./HttpCacheAndroid/flowChart.png)
 
 
-
-# 参考资料
 
 			
-<br>
-<br>
+
 <br>
 <br>
 

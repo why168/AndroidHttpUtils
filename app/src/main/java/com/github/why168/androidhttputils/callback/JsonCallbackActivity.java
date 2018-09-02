@@ -1,12 +1,11 @@
 package com.github.why168.androidhttputils.callback;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.github.why168.androidhttputils.bean.CoinBean;
 import com.github.why168.androidhttputils.R;
+import com.github.why168.androidhttputils.bean.CoinBean;
 import com.github.why168.http.HttpUtils;
 import com.github.why168.http.JsonCallback;
 import com.github.why168.http.Request;
@@ -17,16 +16,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class JsonCallbackActivity extends AppCompatActivity {
+public class JsonCallbackActivity extends BaseCallbackActivity {
     private TextView textView;
-    private HttpUtils androidHttp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_json_callback);
 
-        androidHttp = new HttpUtils();
         textView = (TextView) findViewById(R.id.textView);
     }
 

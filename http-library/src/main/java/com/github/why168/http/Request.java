@@ -17,7 +17,6 @@ public final class Request {
     private final byte[] body;
     private final String tag;
 
-
     private Request(Builder builder) {
         this.url = builder.url;
         this.method = builder.method;

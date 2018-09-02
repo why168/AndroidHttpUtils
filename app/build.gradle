@@ -1,16 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    buildToolsVersion '27.0.3'
+    compileSdkVersion 27
+
     defaultConfig {
         applicationId "com.github.why168.androidhttputils"
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion 27
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -24,21 +26,22 @@ android {
             jvmArgs '-XX:MaxPermSize=256m'
         }
     }
+
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.9.5'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'org.mockito:mockito-core:1.9.5'
+    api 'com.android.support.constraint:constraint-layout:1.0.2'
 
     // support
-    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    api "com.android.support:appcompat-v7:${supportLibVersion}"
 
-    compile 'com.lovedise:permissiongen:0.0.6'
-    compile project(':http-library')
+    api 'com.lovedise:permissiongen:0.0.6'
+    api project(':http-library')
 }

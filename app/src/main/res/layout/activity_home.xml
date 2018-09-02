@@ -53,4 +53,13 @@
         android:textAllCaps="false"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp" />
+
+    <Button
+        android:onClick="startLoopCallback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LoopCallback"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 </LinearLayout>

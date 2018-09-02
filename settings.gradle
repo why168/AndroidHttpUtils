@@ -1,1 +1,1 @@
-include ':app', ':http-library'
+include ':app', ':http-library', ':HttpCacheAndroid'

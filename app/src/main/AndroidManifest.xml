@@ -3,7 +3,6 @@
     package="com.github.why168.androidhttputils">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
@@ -16,8 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--exported:要求必须为false，为true则会报安全异常。-->
-        <!--grantUriPermissions:true，表示授予 URI 临时访问权限。-->
+        <!-- exported:要求必须为false，为true则会报安全异常。 -->
+        <!-- grantUriPermissions:true，表示授予 URI 临时访问权限。 -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.github.why168.androidhttputils.fileprovider"
@@ -48,6 +47,8 @@
         <activity
             android:name=".callback.BitmapCallbackActivity"
             android:label="BitmapCallback" />
+        <activity android:name=".callback.LoopCallbackActivity" />
+        <activity android:name=".callback.BaseCallbackActivity"></activity>
     </application>
 
 </manifest>

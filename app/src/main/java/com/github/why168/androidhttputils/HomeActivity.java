@@ -8,6 +8,7 @@ import android.view.View;
 import com.github.why168.androidhttputils.callback.BitmapCallbackActivity;
 import com.github.why168.androidhttputils.callback.FileCallbackActivity;
 import com.github.why168.androidhttputils.callback.JsonCallbackActivity;
+import com.github.why168.androidhttputils.callback.LoopCallbackActivity;
 import com.github.why168.androidhttputils.callback.StringCallbackActivity;
 
 /**
@@ -41,4 +42,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
+    public void startLoopCallback(View view) {
+        startActivity(new Intent(this, LoopCallbackActivity.class));
+    }
 }

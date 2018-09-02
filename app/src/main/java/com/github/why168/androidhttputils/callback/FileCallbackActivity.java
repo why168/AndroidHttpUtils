@@ -5,17 +5,15 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.why168.androidhttputils.utils.FileProviderUtils;
 import com.github.why168.androidhttputils.R;
+import com.github.why168.androidhttputils.utils.FileProviderUtils;
 import com.github.why168.http.Call;
 import com.github.why168.http.FileCallback;
-import com.github.why168.http.HttpUtils;
 import com.github.why168.http.Request;
 import com.github.why168.http.Response;
 
@@ -24,15 +22,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FileCallbackActivity extends AppCompatActivity {
+public class FileCallbackActivity extends BaseCallbackActivity {
     private TextView textView;
-    private HttpUtils androidHttp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_callback);
-        androidHttp = new HttpUtils();
         textView = (TextView) findViewById(R.id.textView);
     }
 
